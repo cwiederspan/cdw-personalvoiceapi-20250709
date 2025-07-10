@@ -6,4 +6,9 @@ This project can be used as a template for new GitHub Codepsace projects.
 
 az login -t $TENANT_ID
 
+mkdir src
+cd src
+
+dotnet new webapi -n PersonalVoiceApi
+
 ```

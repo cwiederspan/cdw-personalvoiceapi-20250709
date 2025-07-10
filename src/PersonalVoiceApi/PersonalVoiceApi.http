@@ -1,0 +1,6 @@
+@PersonalVoiceApi_HostAddress = http://localhost:5101
+
+GET {{PersonalVoiceApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
