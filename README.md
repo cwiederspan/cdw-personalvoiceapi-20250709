@@ -13,6 +13,8 @@ dotnet new webapi -n PersonalVoiceApi
 
 azd init
 
+azd up
 
+# Don't forget to assign the managed identity to the TTS endpoint
 
 ```
