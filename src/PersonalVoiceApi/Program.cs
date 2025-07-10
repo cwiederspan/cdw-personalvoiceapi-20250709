@@ -21,8 +21,6 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-// app.UseHttpsRedirection();
-
 app.MapGet("/synthesize", async Task<IResult> (
     [Description("SSML input to be synthesized")] string ssml) =>
 {
@@ -33,17 +31,13 @@ app.MapGet("/synthesize", async Task<IResult> (
     var speechToken = $"aad#{resourceId}#{accessToken.Token}";
     var speechConfig = SpeechConfig.FromAuthorizationToken(speechToken, region);
 
-    //var audioConfig = AudioConfig.FromWavFileOutput("output.wav");
-
-    using (var synthesizer = new SpeechSynthesizer(speechConfig, null /*, audioConfig*/))
+    using (var synthesizer = new SpeechSynthesizer(speechConfig, null))
     {
         var markup = $"<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='http://www.w3.org/2001/mstts' xml:lang='en-US'>" +
         "<voice name='DragonLatestNeural'>" +
         $"<mstts:ttsembedding speakerProfileId='{speakerId}'>" +
         "<lang xml:lang='en-US'>" +
-        // "<break time='1s'/>" +
         ssml +
-        // "<break time='1s'/>" +
         "</lang>" +
         "</mstts:ttsembedding>" +
         "</voice>" +
