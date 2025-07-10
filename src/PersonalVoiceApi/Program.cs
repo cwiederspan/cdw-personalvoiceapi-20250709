@@ -1,11 +1,7 @@
+using System.ComponentModel;
 using Microsoft.CognitiveServices.Speech;
 using Azure.Identity;
 using Azure.Core;
-using Azure;
-using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel;
-using System.Xml.Serialization;
-using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,9 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-var resourceId = builder.Configuration["SpeechResourceId"];
-var region = builder.Configuration["SpeechRegion"];
-var speakerId = builder.Configuration["SpeakerId"];
+var resourceId = builder.Configuration["Settings:SpeechResourceId"];
+var region = builder.Configuration["Settings:SpeechRegion"];
+var speakerId = builder.Configuration["Settings:SpeakerId"];
 
 var app = builder.Build();
 
@@ -25,7 +21,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.MapGet("/synthesize", async Task<IResult> (
     [Description("SSML input to be synthesized")] string ssml) =>
@@ -39,7 +35,7 @@ app.MapGet("/synthesize", async Task<IResult> (
 
     //var audioConfig = AudioConfig.FromWavFileOutput("output.wav");
 
-    using (var synthesizer = new SpeechSynthesizer(speechConfig /*, audioConfig*/))
+    using (var synthesizer = new SpeechSynthesizer(speechConfig, null /*, audioConfig*/))
     {
         var markup = $"<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='http://www.w3.org/2001/mstts' xml:lang='en-US'>" +
         "<voice name='DragonLatestNeural'>" +

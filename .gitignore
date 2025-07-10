@@ -386,3 +386,4 @@ override.tf.json
 
 # Custom
 .env
+.azure

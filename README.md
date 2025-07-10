@@ -1,6 +1,6 @@
 # Development Container Template
 
-This project can be used as a template for new GitHub Codepsace projects.
+This project creates an API wrapper for the Personal Voice service in Azure.
 
 ```bash
 
@@ -10,5 +10,9 @@ mkdir src
 cd src
 
 dotnet new webapi -n PersonalVoiceApi
+
+azd init
+
+
 
 ```

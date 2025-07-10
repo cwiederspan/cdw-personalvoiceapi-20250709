@@ -1,0 +1,27 @@
+openapi: 3.0.3
+info:
+  title: Audio Synthesis API
+  version: 1.0.0
+paths:
+  /synthesize:
+    get:
+      summary: Synthesize speech from SSML and return a WAV file
+      parameters:
+        - name: ssml
+          in: query
+          required: true
+          description: The marked up SSML content to be synthesized.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A WAV audio file containing the synthesized speech.
+          content:
+            audio/wav:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad request — missing or invalid SSML
+        '500':
+          description: Internal server error
