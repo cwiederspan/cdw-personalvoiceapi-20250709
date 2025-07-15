@@ -1,8 +1,10 @@
 using System.ComponentModel;
-using Microsoft.CognitiveServices.Speech;
-using Azure.Identity;
-using Azure.Core;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Connections;
+using Microsoft.CognitiveServices.Speech;
+
+using Azure.Core;
+using Azure.Identity;
 
 // Possible null reference argument.
 #pragma warning disable CS8604 
@@ -52,8 +54,15 @@ app.MapGet("/synthesize/file", async Task<IResult> (string ssml, Generator gener
     var audioData = await generator.GenerateContentAsync(ssml, speakerId);
 
     if (audioData != null) {
+
         string url = await fileStore.SaveFileAsync(audioData);
-        result = TypedResults.Text(url);
+
+        var json = new {
+            downloadUrl = url,
+            fileType = "audio/wav"
+        };
+
+        result = TypedResults.Json(json);
     }
 
     return result;
