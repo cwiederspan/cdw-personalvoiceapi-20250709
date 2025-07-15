@@ -1,14 +1,19 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
-
 name: cdw-personalvoiceapi-20250709
 metadata:
-    template: azd-init@1.17.2
+  template: azd-init@1.17.2
 services:
-    personal-voice-api:
-        project: src/PersonalVoiceApi
-        host: containerapp
-        language: dotnet
+  personal-voice-api:
+    project: src/PersonalVoiceApi
+    host: containerapp
+    language: dotnet
 resources:
-    personal-voice-api:
-        type: host.containerapp
-        port: 8080
+  personal-voice-api:
+    type: host.containerapp
+    port: 8080
+    uses:
+      - storage
+  storage:
+    type: storage
+    containers:
+      - downloads

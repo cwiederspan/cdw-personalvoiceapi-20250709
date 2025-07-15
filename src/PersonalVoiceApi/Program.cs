@@ -16,8 +16,10 @@ builder.Services.AddOpenApi();
 var resourceId = builder.Configuration["Settings:SpeechResourceId"];
 var region = builder.Configuration["Settings:SpeechRegion"];
 var speakerId = builder.Configuration["Settings:SpeakerId"];
+var storageEndpoint = builder.Configuration["AZURE_STORAGE_BLOB_ENDPOINT"];
 
-builder.Services.AddTransient<Generator>((sp) => new Generator(resourceId, region));
+builder.Services.AddTransient((sp) => new Generator(resourceId, region));
+builder.Services.AddTransient((sp) => new FileStore(storageEndpoint, "downloads"));
 
 var app = builder.Build();
 
@@ -36,6 +38,22 @@ app.MapGet("/synthesize", async Task<IResult> (string ssml, Generator generator)
 
     if (audioData != null) {
         result = TypedResults.File(audioData, "audio/wav", $"content_{DateTime.UtcNow.ToString("yyyyMMddhhmmss")}.wav");
+    }
+
+    return result;
+});
+
+app.MapGet("/synthesize/file", async Task<IResult> (string ssml, Generator generator, FileStore fileStore) => {
+
+    Console.WriteLine($"Received SSML: {ssml}");
+
+    IResult result = TypedResults.StatusCode(500);
+
+    var audioData = await generator.GenerateContentAsync(ssml, speakerId);
+
+    if (audioData != null) {
+        string url = await fileStore.SaveFileAsync(audioData);
+        result = TypedResults.Text(url);
     }
 
     return result;
