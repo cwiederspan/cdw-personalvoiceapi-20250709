@@ -2,6 +2,10 @@ using System.ComponentModel;
 using Microsoft.CognitiveServices.Speech;
 using Azure.Identity;
 using Azure.Core;
+using Microsoft.AspNetCore.Components;
+
+// Possible null reference argument.
+#pragma warning disable CS8604 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,48 +17,31 @@ var resourceId = builder.Configuration["Settings:SpeechResourceId"];
 var region = builder.Configuration["Settings:SpeechRegion"];
 var speakerId = builder.Configuration["Settings:SpeakerId"];
 
+builder.Services.AddTransient<Generator>((sp) => new Generator(resourceId, region));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
     app.MapOpenApi();
 }
 
-app.MapGet("/synthesize", async Task<IResult> (
-    [Description("SSML input to be synthesized")] string ssml) =>
-{
+app.MapGet("/synthesize", async Task<IResult> (string ssml, Generator generator) => {
+
+    Console.WriteLine($"Received SSML: {ssml}");
+
     IResult result = TypedResults.StatusCode(500);
 
-    var credential = new DefaultAzureCredential(false);
-    var accessToken = credential.GetToken(new TokenRequestContext(new[] { "https://cognitiveservices.azure.com/.default" }));
-    var speechToken = $"aad#{resourceId}#{accessToken.Token}";
-    var speechConfig = SpeechConfig.FromAuthorizationToken(speechToken, region);
+    var audioData = await generator.GenerateContentAsync(ssml, speakerId);
 
-    using (var synthesizer = new SpeechSynthesizer(speechConfig, null))
-    {
-        var markup = $"<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='http://www.w3.org/2001/mstts' xml:lang='en-US'>" +
-        "<voice name='DragonLatestNeural'>" +
-        $"<mstts:ttsembedding speakerProfileId='{speakerId}'>" +
-        "<lang xml:lang='en-US'>" +
-        ssml +
-        "</lang>" +
-        "</mstts:ttsembedding>" +
-        "</voice>" +
-        "</speak>";
-
-        var synthResult = await synthesizer.SpeakSsmlAsync(markup);
-
-        if (synthResult.Reason == ResultReason.SynthesizingAudioCompleted)
-        {
-            result = TypedResults.File(synthResult.AudioData, "audio/wav", $"content_{DateTime.UtcNow.ToString("yyyyMMddhhmmss")}.wav");
-        }
+    if (audioData != null) {
+        result = TypedResults.File(audioData, "audio/wav", $"content_{DateTime.UtcNow.ToString("yyyyMMddhhmmss")}.wav");
     }
 
     return result;
-})
-.WithName("Synthesize").WithSummary("Synthesize speech from SSML and return a WAV file").Produces(200, contentType: "audio/wav");
-//.Produces<StatusCodeResult>(200, "audio/wav");
-// .Produces<StatusCodeResult>(500);
+});
 
 app.Run();
+
+ // Possible null reference argument.
+#pragma warning restore CS8604

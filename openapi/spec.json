@@ -1,0 +1,59 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "PersonalVoiceApi | v1",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://personal-voice-api.thankfulbeach-f736cba4.eastus2.azurecontainerapps.io/"
+    }
+  ],
+  "paths": {
+    "/synthesize": {
+      "get": {
+        "tags": [
+          "PersonalVoiceApi"
+        ],
+        "summary": "Synthesize speech from SSML and return a WAV file",
+        "operationId": "Synthesize",
+        "parameters": [
+          {
+            "name": "ssml",
+            "in": "query",
+            "description": "SSML input to be synthesized",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "audio/wav": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — missing or invalid SSML"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": { },
+  "tags": [
+    {
+      "name": "PersonalVoiceApi"
+    }
+  ]
+}
