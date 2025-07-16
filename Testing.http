@@ -1,0 +1,5 @@
+GET http://127.0.0.1:5150/synthesize/file?ssml=This%20is%20a%20test%20of%20the%20emergency%20broadcast%20system.%20This%20is%20only%20a%20test HTTP/1.1
+
+###
+
+GET https://personal-voice-api.thankfulbeach-f736cba4.eastus2.azurecontainerapps.io/synthesize/file?ssml=This%20is%20a%20test%20of%20the%20emergency%20broadcast%20system.%20This%20is%20only%20a%20test HTTP/1.1
