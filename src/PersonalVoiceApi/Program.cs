@@ -30,6 +30,8 @@ if (app.Environment.IsDevelopment()) {
     app.MapOpenApi();
 }
 
+app.MapGet("/", () => "Hello, World!");
+
 app.MapGet("/synthesize", async Task<IResult> (string ssml, Generator generator) => {
 
     Console.WriteLine($"Received SSML: {ssml}");
